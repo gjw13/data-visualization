@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1547746653555.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2011452361",
+    "id" : "BA1D4A65",
+    "lastKnownWriteTime" : 1547746614,
+    "last_content_update" : 1547750179942,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data Viz/Lab01/prepNotes.Rmd",
+    "project_path" : "prepNotes.Rmd",
+    "properties" : {
+        "cursorPosition" : "241,37",
+        "scrollLine" : "226"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

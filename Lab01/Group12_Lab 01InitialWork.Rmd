@@ -1,0 +1,133 @@
+---
+title: "Lab 01 Initial Work"
+author: "Group 12"
+date: "1/22/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+load("36361-0001-Data.rda")
+full_data <- da36361.0001
+remove(da36361.0001)
+```
+
+## Comparison of Alcohol Users and Non-users
+
+Our group will compare people who use alcohol to people who do not use alcohol.  We will compare the distribution of Non-users, Light Users, Moderate Users, and Heavy Users. Finally, we will  illustrate the difference of heavy alcohol users to light alcohol users.
+
+Our central goal is to illustrate the frequency of alcohol use overall as well as illustrate how the severity of alcohol use differs within alcohol users. We also want to determine if heavy users of alcohol are less healthy than light users.
+
+For the purposes of this data, we will define the following terms:
+
+A Current User is a person who has used alcohol in the past 30 days.
+A Former User is a person who has not used alcohol in the past 30 days.
+A Non-user is a person who has not used alcohol in their lifetime.
+A Light User is a person who has drank less than 10 days in the past month.
+A Moderate User is a person who has drank between 10 and 20 days in the past month.
+A Heavy User is a person who has drank over 20 days in the past month.
+Health is a self-reported variable. 
+
+## Description of Data
+
+ALCFLAG - Data which shows if a user has ever used alcohol.
+
+ALCREC - Data which shows the last time a person used alcohol.
+
+ALCYRTOT - Data which shows the frequency of alcohol use in the past year.
+
+ALCDAYS - Data which shows how often a person used alcohol in the past 30 days.
+
+```{r full_data}
+full_data <- mutate(full_data, alc_user_status =
+                    ifelse(ALCFLAG == "(0) Never used (IRALCRC = 9)", "Never User", 
+                           ifelse(ALCMON == "(0) Did not use in the past month (IRALCRC = 2-3,0)", 
+                                  "Former User", "Current User")))
+full_data <- mutate(full_data, alc_30day_use = cut(ALCDAYS, c(0, 10, 20, 30),
+                                                   c("Light User", "Moderate User", "Heavy User")))
+
+full_data <- mutate(full_data, alc_user_status = ifelse(alc_user_status =="Current User",
+                                                        as.character(alc_30day_use), alc_user_status))
+
+bar <- ggplot(full_data)+geom_bar(aes(x=alc_user_status, fill=HEALTH),position="fill")+scale_fill_brewer(palette="RdYlBu", direction=-1)
+bar <- bar + labs(title="Self Reported Health of Users and Non-Users of Alcohol") 
+
+full_data <- mutate(full_data, alc_user_status = as.factor(alc_user_status))
+
+full_data <- mutate(full_data, alc_user_status = fct_relevel(alc_user_status,
+                                                            "Never User",
+                                                            "Light User",
+                                                            "Moderate User",
+                                                            "Heavy User"))
+
+```
+This graph displays the self-reported overall health of people who are categorized as "heavy," "light," "moderate," or "never" users.
+
+Now, we wish to compare the relative health of people who we have defined as heavy users versus those we have defined as light users. We defined heavy users as those who have drank alcohol 30 days within the past month (30 days) and light users as those who have drank 10 days within the past month.
+```{r user_defs}
+heavy_use_criteria <- 20
+light_use_criteria <- 10
+```
+
+Using these definitions, we can now create two data subgroups: heavy users and light users.
+```{r subsetting_data}
+heavy_users <- filter(full_data, ALCDAYS < heavy_use_criteria & ALCDAYS > 20)
+light_users <- filter(full_data, ALCDAYS < light_use_criteria)
+```
+
+```{r shrinking_data}
+remove(full_data)
+
+heavy_users <- select(heavy_users, HEALTH)
+light_users <- select(light_users, HEALTH)
+```
+
+It may be useful to us to have the data about both groups (regular and never users) in our data object.  To accomplish this, we add a new variable *user_status* to both our data objects.  For all observations in *current_users* we wish to set the value of this variable to "current"  For all observations in *light_users* we wish to set the value of this variable to "light"  Once we have added this variable to both datasets, we combine them using the **rbind()** function.  **rbind()** stands for row bind -- it binds or glues two datasets together along by putting one dataset on top of the other.  For a **rbind()** command to work, the two datasets being combined must have the same columns/variables (there is also a **cbind()** function, but we will rarely use it).
+
+```{r combining data}
+heavy_users$alc_user_status <- "heavy"
+light_users$alc_user_status <- "light"
+combined_data <- rbind(heavy_users, light_users)
+```
+
+## Heavy User Data
+```{r heavy_user_graphs}
+#piegraph
+piegraph <- ggplot(heavy_users) + geom_bar(aes(x=0, fill=HEALTH, y=..count../sum(..count..))) + coord_polar(theta="y") + scale_fill_brewer(palette="RdYlBu", direction =-1)
+piegraph <- piegraph + labs(title="Self reported Health of Heavy Users of Alcohol")
+piegraph
+
+#coxcomb
+coxcomb <- ggplot(heavy_users) + geom_bar(aes(x=HEALTH, fill=HEALTH, color=HEALTH, y=..count../sum(..count..)), width=1) + coord_polar()+scale_y_sqrt() + scale_fill_brewer(palette="RdYlBu", direction =-1)
+coxcomb <- coxcomb + labs(title="Self Reported Health of Heavy Users of Alcohol")
+coxcomb
+
+#dot
+dot <- ggplot(heavy_users) + geom_segment(aes(x=HEALTH,xend=HEALTH, color=HEALTH),yend=0,stat="count",width=.02) + geom_point(aes(x=HEALTH, color=HEALTH),stat="count",size=2)+
+  coord_flip()+ scale_fill_brewer(palette="RdYlBu", direction =-1)
+dot <- dot + labs(title="Self Reported Health of Heavy Users of Alcohol") 
+dot 
+
+```
+
+## Light User Data
+```{r light_user_graphs}
+#piegraph
+light_user_piegraph <- ggplot(light_users) + geom_bar(aes(x=0, fill=HEALTH, y=..count../sum(..count..))) + coord_polar(theta="y") + scale_fill_brewer(palette="RdYlBu", direction =-1)
+light_user_piegraph <- light_user_piegraph + labs(title="Self reported Health of Light Users of Alcohol")
+light_user_piegraph
+
+#coxcomb
+light_user_coxcomb <- ggplot(light_users) + geom_bar(aes(x=HEALTH, fill=HEALTH, color=HEALTH, y=..count../sum(..count..)), width=1) + coord_polar()+scale_y_sqrt()+ scale_fill_brewer(palette="RdYlBu", direction =-1)
+light_user_coxcomb <- light_user_coxcomb + labs(title="Self Reported Health of Light Users of Alcohol")
+light_user_coxcomb
+
+#dot
+light_user_dot <- ggplot(light_users) + geom_segment(aes(x=HEALTH,xend=HEALTH, color=HEALTH),yend=0,stat="count",width=.02) + geom_point(aes(x=HEALTH, color=HEALTH),stat="count",size=2)+
+  coord_flip()+ scale_fill_brewer(palette="RdYlBu", direction =-1)
+light_user_dot <- light_user_dot + labs(title="Self Reported Health of Light Users of Alcohol") 
+light_user_dot
+```
+
+

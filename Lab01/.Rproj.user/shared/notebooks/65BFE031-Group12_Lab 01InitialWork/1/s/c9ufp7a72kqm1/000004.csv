@@ -1,0 +1,8 @@
+"0","full_data <- mutate(full_data, alc_user_status = as.factor(alc_user_status))"
+"0","full_data <- mutate(full_data, alc_user_status = fct_relevel(alc_user_status,"
+"0","                                                            ""Never User"","
+"0","                                                            ""Former User"","
+"0","                                                            ""Light User"","
+"0","                                                            ""Moderate User""))"
+"2","Unknown levels in `f`: Former User"
+"0","tail(filter(select(full_data,alc_user_status, ALCFLAG,ALCMON,ALCDAYS,alc_30day_use),ALCDAYS>5))"

@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1550853381695.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "542061836",
+    "id" : "609A1EBF",
+    "lastKnownWriteTime" : 1550866744,
+    "last_content_update" : 1551376171224,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/GuidedExercise03/ge03.Rmd",
+    "project_path" : "ge03.Rmd",
+    "properties" : {
+        "cursorPosition" : "88,375",
+        "last_setup_crc32" : "96714348bb338d19",
+        "scrollLine" : "81",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

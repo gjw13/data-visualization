@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1553618518862.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "772611604",
+    "id" : "F70FAAD7",
+    "lastKnownWriteTime" : 1553622245,
+    "last_content_update" : 1553622245689,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/InClassMarch26/InClassMarch26.Rmd",
+    "project_path" : "InClassMarch26.Rmd",
+    "properties" : {
+        "cursorPosition" : "11,12",
+        "last_setup_crc32" : "7990F6214bd75d9e",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

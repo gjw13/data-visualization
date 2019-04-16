@@ -1,0 +1,135 @@
+---
+title: "Guided Excercise 2"
+author: "Greg Wills"
+date: "1/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction and Data
+
+```{r load_data}
+# Loading packages
+library(tidyverse)
+
+# Load data from CSVs
+player_data <- read.csv("Master.csv")
+pitching_data <- read.csv("Pitching.csv")
+salary_data <- read.csv("Salaries.csv")
+inflation_index <- read.csv("inflation.csv")
+```
+
+# Exercise 1
+
+```{r exercise1}
+head(pitching_data)
+
+pitching_data$yearID <- as.factor(pitching_data$yearID)
+pitching_data <- filter(pitching_data, !is.na(ERA))
+ggplot(pitching_data) + geom_boxplot(aes(x=yearID,y=ERA))
+```
+
+Graph 1: This graph shows the distribution of ERAs for each year.
+
+```{r graph2}
+pitching_data$yearID <- as.factor(pitching_data$yearID)
+summary_ERA <- summarize(group_by(pitching_data, yearID), Q1=quantile(ERA,.25,na.rm=T),median=median(ERA,na.rm=T),
+                         Q3=quantile(ERA,.75,na.rm=T),min=min(ERA),max=max(ERA))
+summary_ERA
+summary_ERA$yearID <- as.numeric(as.character(summary_ERA$yearID))
+
+ggplot(summary_ERA) + geom_line(aes(x=yearID,y=median))
+```
+
+Graph 2: This line graph shows how the median ERA has changed over time.
+
+# Exercise 2
+
+```{r ERA_Plot_3}
+ggplot(summary_ERA) + geom_ribbon(aes(x=yearID,ymin=Q1,ymax=Q3),fill="lightgreen")+ geom_line(aes(x=yearID,y=median),color="darkblue")
+```
+
+Graph 3: This graph shows the range between the first and third quartiles as depicted by the green ribbon, with the median ERA as the dark blue line.
+
+# Exercise 3
+
+```{r graph4}
+# variables
+min_games_pitched = 10
+low_era = 3
+high_era = 6
+
+pitching_data$ERA <- as.numeric(pitching_data$ERA)
+
+# Filtered for 10 games minimum pitched
+games_pitched_filtered <- filter(pitching_data, G >= min_games_pitched)
+games_pitched_filtered$yearID <- as.numeric(as.character((games_pitched_filtered$yearID)))
+
+summary_ERA_2 <- summarize(group_by(games_pitched_filtered, yearID),era_below_3=sum(ERA <= 3,na.rm=T), era_above_6=sum(ERA >= 6,na.rm=T), below_3_eras_proportion=mean(ERA <= 3,na.rm=T), above_6_eras_proportion=mean(ERA >= 6,na.rm=T), top_era=max(ERA), bottom_era=min(ERA))
+tail(summary_ERA_2)
+
+summary_ERA_2$yearID <- as.numeric(as.character(summary_ERA_2$yearID))
+
+ggplot(summary_ERA_2) + 
+  geom_line(aes(x=yearID,y=below_3_eras_proportion,color="3 or under"))+ 
+  geom_line(aes(x=yearID,y=above_6_eras_proportion,color="6 or higher"))+
+  scale_color_manual(values=c("3 or under"="darkblue","6 or higher"="red"),
+                     name="ERA") +
+  labs(x="Year", y="Proportion", title="Proportion of Pitchers (pitching at least 10 games)\n With Low and High ERAs by Year")+
+  theme_classic()
+```
+
+Graph 4: This graph displays the proportion of pitchers who had an ERA less than or equal to 3 and the proportion who had an ERA greater than or equal to 6.
+
+# Exercise 4
+
+```{r graph5}
+names(inflation_index)[1] <- "yearID"
+head(inflation_index)
+
+salary_data$playerID <- as.character(salary_data$playerID)
+player_data$playerID <- as.character(player_data$playerID)
+
+country_data <- inner_join(player_data, salary_data, by="playerID")
+country_data <- mutate(country_data,usa_born = ifelse(birthCountry == "USA","Born in USA","Born outside USA"))
+
+salary_sum <- summarize(group_by(country_data, yearID, usa_born),
+                             Q1= quantile(salary,.25, na.rm=T),
+                             median = median(salary, na.rm=T),
+                             Q3 = quantile(salary,.75, na.rm=T),
+                             min=min(salary, na.rm=T),
+                             max=max(salary, na.rm=T))
+
+salary_sum$yearID <- as.numeric(as.character(salary_sum$yearID))
+salary_data$salary <- as.numeric(salary_data$salary)
+
+country_summary_left <- left_join(salary_sum, inflation_index, by="yearID")
+country_summary_left[country_summary_left$yearID==2015, "inflation2015"]<-1
+tail(country_summary_left)
+
+country_summary <- mutate(country_summary_left, 
+                          median_inflation_adjusted = median*inflation2015, 
+                          Q1_inflation_adjusted = Q1*inflation2015, 
+                          Q3_inflation_adjusted = Q3*inflation2015, 
+                          min_inflation_adjusted = min*inflation2015, 
+                          max_inflation_adjusted = max*inflation2015)
+
+ggplot(country_summary)+
+  geom_ribbon(aes(x=yearID,
+                  ymin=Q1_inflation_adjusted,
+                  ymax=Q3_inflation_adjusted,
+                  fill=usa_born), alpha=.4)+
+  geom_line(aes(x=yearID,
+                y=median_inflation_adjusted,
+                color=usa_born),size=1)+
+  scale_y_continuous(labels=scales::dollar)+
+  labs(y="Annual Salary \n (Adjusted for Inflation)", x="Year", title="Salaries of Middle 50% of Earners in Major League Baseball") +
+  scale_color_discrete(name="Median") +
+  scale_fill_discrete(name="Middle 50% Earners") +
+  theme_minimal()
+```
+
+Graph 5: This graph displays the salaries for the central 50% of earners divided between players who were born in the United States and who were born outside the United States.

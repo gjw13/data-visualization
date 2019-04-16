@@ -1,0 +1,396 @@
+library(tidyverse)
+
+set.seed(4242)
+
+diamonds.s <- diamonds[sample(1:nrow(diamonds),3),]
+
+diamonds.s <- mutate_if(diamonds.s,is.numeric,scale)
+
+diamonds.s <- mutate(diamonds.s, ID=1:n())
+
+diamonds.s.g <- gather(diamonds.s,key,value,c(1,5:10))
+
+ggplot(diamonds.s.g, aes(x=key,y=value,group=ID,
+                         color=color,fill=cut))+
+  geom_line(size=2)+
+  geom_point(size=2, shape=21, colour="grey50")+
+  scale_fill_brewer(palette="Dark2")+
+  scale_color_brewer(palette="Accent")+
+  scale_y_continuous(name=element_blank(),breaks=NULL)
+
+g <- ggplot(diamonds.s.g, aes(x=key,y=value,group=ID,color=color,fill=cut))+
+  geom_line(size=2)+
+  geom_point(size=2, shape=21, colour="grey50")+
+  scale_fill_brewer(palette="Dark2")+
+  scale_color_brewer(palette="Accent")+
+  scale_y_continuous(name=element_blank(),breaks=NULL)
+
+g+coord_polar()
+g+coord_polar()+scale_x_discrete(expand=c(0,0))
+
+gapfill <- diamonds.s.g[diamonds.s.g$key=="carat",]
+gapfill$key <- "zz"
+diamonds.s.g.2 <- rbind(diamonds.s.g,gapfill)
+
+g <- ggplot(diamonds.s.g.2, aes(x=key,y=value,group=ID,color=color,fill=cut))+
+  geom_line(size=2)+
+  geom_point(size=2, shape=21, colour="grey50")+
+  geom_hline(yintercept=0)+
+  scale_fill_brewer(palette="Dark2")+
+  scale_color_brewer(palette="Accent")+
+  scale_y_continuous(name=element_blank(),breaks=NULL)
+
+g
+
+g_radar <- g+coord_polar()+
+  scale_x_discrete(expand=c(0,0),
+                   breaks=c("carat","depth", "table","price","x","y","z"),
+                   labels=c("Carat","Depth","Price","Table","X","Y","Z"))
+
+g_radar
+
+g_radar + facet_wrap(~ID)
+
+library(GGally) #contains ggparcoord
+
+diamonds.samp <- diamonds[sample(1:dim(diamonds)[1], 200), ]
+
+# basic parallel coordinate plot, using default settings
+p <- ggparcoord(data = diamonds.samp, columns = c(1, 5:10))
+p
+
+# this time, color by diamond cut
+p <- ggparcoord(data = diamonds.samp,
+                columns = c(1, 5:10),
+                groupColumn = 2)
+p
+
+# underlay univariate boxplots, add title, use uniminmax scaling
+p_uniminmax <- ggparcoord(data = diamonds.samp,
+                scale="uniminmax",
+                columns = c(1, 5:10),
+                groupColumn = 2,
+                boxplot = TRUE,
+                title = "Parallel Coord. Plot of Diamonds Data")
+p_uniminmax
+
+# as above, but with robust scaling
+p_robust <- ggparcoord(data = diamonds.samp,
+                          scale="robust",
+                          columns = c(1, 5:10),
+                          groupColumn = 2,
+                          boxplot = TRUE,
+                          title = "Parallel Coord. Plot of Diamonds Data")
+p_robust
+
+# as above, but with z-score scaling
+p_zscore <- ggparcoord(data = diamonds.samp,
+                       scale="std",
+                       columns = c(1, 5:10),
+                       groupColumn = 2,
+                       boxplot = TRUE,
+                       title = "Parallel Coord. Plot of Diamonds Data")
+p_zscore
+
+#manual version with boxplots
+ggplot(diamonds.s.g, aes(x=key,y=value))+
+  geom_line(size=2,aes(group=ID,color=color))+
+  geom_point(size=2, shape=21, colour="grey50",aes(fill=cut))+
+  geom_boxplot(alpha=0)+
+  scale_fill_brewer(palette="Dark2")+
+  scale_color_brewer(palette="Accent")+
+  scale_y_continuous(name=element_blank(),breaks=NULL)
+
+# utilize ggplot2 aes to switch to thicker lines
+p <- ggparcoord(data = diamonds.samp,
+                columns = c(1, 5:10),
+                groupColumn = 2,
+                title ="Parallel Coord. Plot of Diamonds Data",
+                mapping = ggplot2::aes(size = 2)) +
+                scale_size_identity()
+p
+
+# basic parallel coord plot of the msleep data, using 'random' imputation and
+# coloring by diet (can also use variable names in the columns and groupColumn
+# arguments)
+p <- ggparcoord(data = msleep, columns = 6:11,
+                groupColumn = "vore", missing =
+                  "random", scale = "uniminmax")
+p
+
+# center each variable by its median, using the default missing value handler,
+# 'exclude'
+p <- ggparcoord(data = msleep, columns = 6:11,
+                groupColumn = "vore", scale =
+                  "center", scaleSummary = "median")
+p
+
+# with the iris data, order the axes by overall class (Species) separation using
+# the anyClass option
+p <- ggparcoord(data = iris, columns = 1:4,
+                groupColumn = 5,
+                order = "anyClass")
+p
+
+# add points to the plot, add a title, and use an alpha scalar to make the lines
+# transparent
+p <- ggparcoord(data = iris, columns = 1:4, groupColumn = 5, order = "anyClass",
+                showPoints = TRUE, title = "Parallel Coordinate Plot for the Iris Data",
+                alphaLines = 0.3)
+p
+
+# transparency according to a column
+iris2 <- iris
+
+#baseR Version
+iris2$alphaLevel <- c("setosa" = 0.2,
+                      "versicolor" = 0.3,
+                      "virginica" = 0)[iris2$Species]
+
+#dplyr version
+iris2 <- mutate(iris2,alphaLevel=factor(Species,labels=c(0.2,0.3,0)))
+iris2 <- mutate(iris2,alphaLevel=as.numeric(as.character(alphaLevel)))
+
+
+p <- ggparcoord(data = iris2,
+                columns = 1:4,
+                groupColumn = 5,
+                order = "anyClass",
+                showPoints = TRUE,
+                title = "Parallel Coordinate Plot for the Iris Data",
+                alphaLines = "alphaLevel")
+p
+
+
+#high-dimensional categorical data
+library(vcd)
+
+Titanic.3<-apply(Titanic,c(1,2,4),sum)
+male.table<-HairEyeColor[,,1]
+
+###double decker plots
+doubledecker(male.table)
+doubledecker(Titanic.3)
+doubledecker(Titanic.3,depvar="Survived")
+doubledecker(Titanic.3,depvar="Class")
+doubledecker(Titanic.3,depvar="Sex")
+doubledecker(Sex~Class+Survived,data=Titanic.3)
+doubledecker(Sex~Survived+Class,data=Titanic.3)
+
+doubledecker(Titanic)
+
+##mosaicplots
+mosaicplot(male.table,main="Hair and Eye Color of Male Statistics students")
+mosaicplot(male.table,main="Hair and Eye Color of Male Statistics students",shade=T)
+
+mosaicplot(Titanic.3,shade=T)
+
+mosaicplot(Titanic.3,shade=T,margin=list(c(1,2),3)) #is survival independent of gender & class?
+mosaicplot(Titanic.3,shade=T,margin=list(c(1,3),2)) #is gender independent of survival & class?
+mosaicplot(Titanic.3,shade=T,margin=list(c(2,3),1)) #is class indepedent of survival & gender?
+
+
+####association plots and fourfold plots
+counts<-c(652,1537,598,242,36,46,38,21,218,327,106,67)
+m<-matrix(counts,ncol=3)
+colnames(m)<-c("Married", "Prev.Married", "Single")
+rownames(m)<-c("0","1-150","150-300","300+")
+mosaicplot(m,shade=T,main="Relationship Between Marital Status
+           and Caffeine Consumption")
+assocplot(m,main="Relationship Between Marital Status and Caffeine Consumption")
+
+
+m.small<-matrix(c(652+1537+36+46,598+242+38+21,218+327,106+67),ncol=2)
+rownames(m.small)<-c("<150","150+")
+colnames(m.small)<-c("(Prev)Married","Single")
+fourfoldplot(m.small,color=c("red","blue"),conf=.95)
+
+(m.small[1,1]*m.small[2,2])/(m.small[1,2]*m.small[2,1])
+
+UCBAdmissions
+deptF<-UCBAdmissions[,,6]
+(deptF[1,1]*deptF[2,2])/(deptF[1,2]*deptF[2,1])
+
+fourfoldplot(UCBAdmissions[,,6],main="Department F",color=c("red","blue"))
+fourfoldplot(UCBAdmissions,color=c("red","blue"))
+fourfoldplot(UCBAdmissions[,,6],main="Department F",color=c("red","blue"))
+
+UCBAdmissions.2 <-apply(UCBAdmissions,c(1,2),sum)
+fourfoldplot(UCBAdmissions.2,color=c("red","blue"))
+(UCBAdmissions.2[1,1]*UCBAdmissions.2[2,2])/(UCBAdmissions.2[1,2]*UCBAdmissions.2[2,1])
+
+
+library(RColorBrewer)
+library(ggparallel) #contains ggparallel functions
+
+ggparallel(list("gear", "cyl","am","gear"),
+           ratio=0.4, data=mtcars,
+           text.angle=0)
+
+#options for "method": angle, adj.angle, parset, or hammock
+
+cols <- c(brewer.pal(3,"Oranges")[-1],brewer.pal(4, "Reds")[-1], brewer.pal(4, "Blues")[-1])
+
+ggparallel(list("gear", "cyl","am"), ratio=.2, data=mtcars,
+           method="parset", text.angle=0,alpha=.5) +
+  scale_fill_manual(values=cols) + scale_colour_manual(values=cols) +
+  theme_bw()
+
+
+## combination of common angle plot and hammock adjustment:
+ggparallel(list("gear", "cyl"), data=mtcars, method="adj.angle",
+           ratio=2)
+
+ggparallel(list("gear", "cyl"), data=mtcars, method="hammock",
+           ratio=.3)
+
+## compare with method='parset'
+ggparallel(list("gear", "cyl"), data=mtcars, method='parset')
+
+## flip plot and rotate text
+ggparallel(list("gear", "cyl"), data=mtcars, text.angle=0) +
+  coord_flip()
+
+## change colour scheme
+ggparallel(list("gear", "cyl"), data=mtcars, text.angle=0) +
+  coord_flip() +
+  scale_fill_brewer(palette="Set1") +
+  scale_colour_brewer(palette="Set1")
+
+## example with more than two variables:
+titanic <- as.data.frame(Titanic)
+ggparallel(names(titanic)[c(1,4,2,1)], order=0, titanic, weight="Freq") +
+  scale_fill_brewer(palette="Paired", guide="none") +
+  scale_colour_brewer(palette="Paired", guide="none")
+
+cols <- c(brewer.pal(5,"Blues")[-1], brewer.pal(3, "Oranges")[-1],
+          brewer.pal(3, "Greens")[-1])
+ggparallel(names(titanic)[c(1,4,2,1)], order=0, titanic, weight="Freq") +
+  scale_fill_manual(values=cols, guide="none") +
+  scale_colour_manual(values=cols, guide="none") + theme_bw()
+
+## hammock plot with same width lines
+ggparallel(names(titanic)[c(1,4,2,3)], titanic, weight=1, asp=0.5,
+           method="hammock", ratio=0.2, order=c(0,0)) +
+  theme( legend.position="none") +
+  scale_fill_brewer(palette="Paired") +
+  scale_colour_brewer(palette="Paired")
+
+## hammock plot with line widths adjusted by frequency
+ggparallel(names(titanic)[c(1,4,2,3)], titanic, weight="Freq",
+           asp=0.5, method="hammock", order=c(0,0), text.angle=0,
+           width=0.45) +
+  theme( legend.position="none")
+
+
+## biological examples: genes and pathways
+data(genes)
+cols <- c(rep("grey80", 24), brewer.pal("YlOrRd", n = 9))
+genes$chrom <- factor(genes$chrom, levels=c(paste("chr", 1:22, sep=""), "chrX", "chrY"))
+ggparallel(list("path", "chrom"), text.offset=c(0.03, 0,-0.03),
+           data = genes,  width=0.1, order=c(1,0), text.angle=0,
+           color="white",
+           factorlevels =  c(sapply(unique(genes$chrom), as.character),
+                             unique(genes$path))) +
+  scale_fill_manual(values = cols, guide="none") +
+  scale_colour_manual(values = cols, guide="none") +
+  coord_flip()
+
+data(Titanic)
+titanic <- as.data.frame(Titanic)
+
+titanic$SexSurvived <- with(titanic, interaction(Sex, Survived))
+titanic$SexClassSurvived <- with(titanic, interaction(Sex,Class, Survived))
+
+ggparallel(vars=list("Survived", "SexSurvived", "SexClassSurvived"),
+           weight="Freq", data=titanic,text.offset = 0,
+           text.angle=0) +
+  theme(legend.position="none") +
+  scale_fill_manual(values = rep(c("Orange", "Steelblue"), 14)) +
+  scale_colour_manual(values = rep(c("Orange", "Steelblue"), 14))+
+  coord_flip()
+
+
+library(aplpack)
+faces(diamonds.s[,c(1,5:10)])
+
+crime <- read_csv("CrimeStatebyState.csv")
+crime <- filter(crime, Year==2013)
+crime <- crime[,c(2,15,17,18,19,20,21,22,23)]
+
+faces(crime[,2:9],labels=str_sub(crime$State,1,4),face.type=2)
+
+library(tidyverse)
+library(ggalluvial)
+
+vignette(topic = "ggalluvial", package = "ggalluvial") #run this to see a tutorial on the use of this package
+
+load("36361-0001-Data.rda") #data from 1st lab
+full_data <- da36361.0001
+
+full_data <- select(full_data,HEALTH,IRSEX,
+                    CIGEVER,MJEVER,COCEVER)
+full_data <- drop_na(full_data)
+
+freq_data <- summarize(group_by(full_data,
+                                HEALTH,IRSEX,
+                                CIGEVER,MJEVER,
+                                COCEVER),freq=n())
+
+#standard version
+ggplot(freq_data,aes(y=freq,axis1=CIGEVER,axis2=MJEVER,axis3=COCEVER))+
+  geom_alluvium(aes(fill=COCEVER))+
+  geom_stratum()+
+  geom_label(stat="stratum",label.strata=TRUE)+
+  scale_x_continuous(breaks=c(1,2,3),labels=c("Cigarettes","Marijuana","Cocaine"))
+
+
+#possible to manually overlay bar plots for each variable
+ggplot(freq_data,aes(y=freq,axis1=CIGEVER,axis2=HEALTH))+
+  geom_alluvium(aes(fill=IRSEX),alpha=1)+
+  geom_stratum()+
+  geom_text(stat="stratum",label.strata=TRUE)+
+  geom_bar(aes(x=1,fill=CIGEVER,y=freq),stat="identity",width=1/3,alpha=.5)+
+  geom_bar(aes(x=2,fill=HEALTH,y=freq),stat="identity",width=1/3,alpha=.5)+
+  scale_fill_manual(name="Sex",breaks=c("(1) Male","(2) Female"),
+                    values=c("(1) Yes"="brown","(2) No" = "green",
+                             "(1) Excellent" = "darkblue","(2) Very good"="blue",
+                             "(3) Good" = "skyblue",
+                             "(4) Fair" = "orange",
+                             "(5) Poor" = "red",
+                             "(1) Male" = "dodgerblue",
+                             "(2) Female"="pink"))+
+  scale_x_continuous(breaks=c(1,2),labels=c("Ever Tried Cigarettes?","Overall Health"))+
+  theme_classic()+
+  theme(axis.line = element_blank(),axis.ticks = element_blank(),axis.text.y = element_blank(),axis.title = element_blank())
+
+
+#alternative approach: make color of flows depend on previous category
+#need to play with the colors to make this more effective
+#note the use of the to_lodes function to transform the form of the data (essentially performs a gather() command)
+ggplot(to_lodes(freq_data,axes=1:4),aes(x=x,stratum=stratum,alluvium=alluvium,
+                                        fill=stratum,label=stratum))+
+  geom_flow(stat="alluvium",lode.guidance="leftright",alpha=1)+
+  geom_stratum()
+
+ggplot(to_lodes(freq_data,axes=1:4),aes(x=x,stratum=stratum,alluvium=alluvium,
+                                        fill=stratum,label=stratum,y=freq))+
+  geom_flow(stat="alluvium",lode.guidance="rightleft")+
+  geom_stratum()
+
+###agreement plots
+test<-matrix(c(1,0,0,0,1,0,0,0,1),ncol=3)
+agreementplot(test)
+test2<-matrix(c(1,1,0,0,1,0,0,0,1),ncol=3)
+agreementplot(test2)
+test2b<-matrix(c(1,2,0,0,1,0,0,0,1),ncol=3)
+agreementplot(test2b)
+test3<-matrix(c(1,0,1,0,1,0,0,0,1),ncol=3)
+agreementplot(test3)
+
+MSPatients
+data.table<-t(MSPatients[,,1])
+agreementplot(data.table)
+
+SexualFun
+agreementplot(SexualFun)

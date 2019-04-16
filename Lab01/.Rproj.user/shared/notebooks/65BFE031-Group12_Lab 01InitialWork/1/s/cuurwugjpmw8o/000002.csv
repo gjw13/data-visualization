@@ -1,0 +1,3 @@
+"0","piegraph <- ggplot(full_data) + geom_bar(aes(x=0, fill=alc_user_status, y=..count../sum(..count..))) + coord_polar(theta=""y"")"
+"0","piegraph <- piegraph + labs(title=""Proportions of Alcohol Users Based on Their Usage Status"")"
+"0","piegraph"

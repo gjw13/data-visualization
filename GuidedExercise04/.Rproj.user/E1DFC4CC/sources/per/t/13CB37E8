@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1551409337647.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "13CB37E8",
+    "lastKnownWriteTime" : 8385554535950581766,
+    "last_content_update" : 1551409337647,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "DFE1C08E",
+        "caption" : "monthly_temps",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=monthly_temps&cache_key=DFE1C08E",
+        "displayedObservations" : 1646,
+        "environment" : "",
+        "object" : "monthly_temps",
+        "preview" : 0,
+        "totalObservations" : 1646,
+        "variables" : 6
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

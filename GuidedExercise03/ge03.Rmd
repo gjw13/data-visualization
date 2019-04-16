@@ -1,0 +1,92 @@
+---
+title: "Guided Exercise 3"
+author: "Greg Wills"
+date: "2/22/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r senate_practice, include=FALSE}
+library(tidyverse)
+all_states <- map_data("state")
+congress<-read_csv("womenincongress.csv")
+names(congress)[2] <- "region"
+stateData <- left_join(all_states,congress,by="region")
+senatePlot <- ggplot()+geom_polygon(data=stateData,aes(x=long, y=lat, group = group, fill=senators),color="grey50")+coord_map()
+senatePlot <- ggplot()+geom_polygon(data=stateData,aes(x=long, y=lat, group = group, fill=as.factor(senators)),color="grey50")+coord_map()
+senatePlot <- senatePlot +  coord_map()+scale_fill_brewer(name="Female Senators",type="seq",palette="Reds")
+senatePlot <- senatePlot + labs(x="", y="", title="Women in the Senate")
+senatePlot <- senatePlot + theme(axis.ticks.y = element_blank(),axis.text.y = element_blank(), axis.ticks.x = element_blank(),axis.text.x = element_blank())
+senatePlot <- senatePlot + theme_bw()
+senatePlot
+```
+
+```{r house_practice, include=FALSE}
+housePlot <- ggplot()+geom_polygon(data=stateData,aes(x=long, y=lat, group = group, fill=as.factor(representatives)),color="grey50")+coord_map()+scale_fill_brewer(name="Female Represenatives",type="seq",palette="Reds")+labs(x="",y="",title="Women in the House")+theme_classic()+ theme(axis.ticks.y = element_blank(),axis.text.y = element_blank(), axis.ticks.x = element_blank(),axis.text.x = element_blank())
+
+housePlot <- ggplot()+geom_polygon(data=stateData,aes(x=long, y=lat, group = group, fill=representatives),color="grey50")+coord_map()+labs(x="",y="",title="Women in the House")+theme_classic()+ theme(axis.ticks.y = element_blank(),axis.text.y = element_blank(), axis.ticks.x = element_blank(),axis.text.x = element_blank())
+
+housePlot <- housePlot + scale_fill_gradient(name="Female Representatives",low="whitesmoke",high="darkred")
+```
+
+# Graph 1
+
+```{r graph1_house_prop}
+congress <- summarize(group_by(congress,region,representatives,total),
+                  redProp=representatives/total)
+
+stateData = mutate(stateData,redProp=representatives/total)
+
+housePlot <- ggplot()+geom_polygon(data=stateData,aes(x=long, y=lat, group = group, fill=redProp),color="grey50")+coord_map()+labs(x="",y="",title="Women in the House")+theme_classic()+ theme(axis.ticks.y = element_blank(),axis.text.y = element_blank(), axis.ticks.x = element_blank(),axis.text.x = element_blank())
+housePlot <- housePlot + scale_fill_gradient(name="Female Representatives",low="whitesmoke",high="darkred")
+housePlot
+```
+
+```{r election-practice, include=FALSE}
+electionData <- read_csv("2012.csv")
+
+names(electionData)[1] <- "region"
+
+electionData$ObamaPerc <- electionData$ObamaVotes/(electionData$ObamaVotes+electionData$RomneyVotes+electionData$JohnsonVotes+electionData$SteinVotes)
+
+electionData$RomneyPerc <- electionData$RomneyVotes/(electionData$ObamaVotes+electionData$RomneyVotes+electionData$JohnsonVotes+electionData$SteinVotes)
+electionData <- merge(all_states,electionData,by="region")
+
+electionPlot <- ggplot()+geom_polygon(data=electionData,aes(x=long, y=lat, group = group, fill=ObamaPerc),color="grey50")+coord_map()+labs(x="",y="",title="2012 Election Results")+theme_classic()+ theme(axis.ticks.y = element_blank(),axis.text.y = element_blank(), axis.ticks.x = element_blank(),axis.text.x = element_blank())
+electionPlot
+
+electionPlot + scale_fill_gradient(name="Obama's Percenatage",low="red",high="blue")
+electionPlot + scale_fill_gradient2(name="Obama's Percenatage",low="red",mid="white",high="blue",midpoint=.5)
+
+northEast <- filter(electionData, region %in% c("connecticut", "maine", "massachusetts", "new hampshire", "rhode island", "vermont", "new jersey", "new york", "pennsylvania", "delaware", "maryland", "district of columbia"))
+
+NEelectionPlot <- ggplot()+geom_polygon(data=northEast,aes(x=long, y=lat, group = group, fill=ObamaPerc),color="grey50")+coord_map()+labs(x="",y="",title="2012 Election Results")+theme_classic()+ theme(axis.ticks.y = element_blank(),axis.text.y = element_blank(), axis.ticks.x = element_blank(),axis.text.x = element_blank()) + scale_fill_gradient2(name="Obama's Percenatage",low="red",mid="white",high="blue",midpoint=.5)
+
+NEelectionPlot
+
+```
+
+# Graph 2
+
+```{r graph2}
+electionData <- read_csv("2012.csv")
+
+names(electionData)[1] <- "region"
+
+electionData$ObamaPerc <- electionData$ObamaVotes/(electionData$ObamaVotes+electionData$RomneyVotes+electionData$JohnsonVotes+electionData$SteinVotes)
+
+electionData$RomneyPerc <- electionData$RomneyVotes/(electionData$ObamaVotes+electionData$RomneyVotes+electionData$JohnsonVotes+electionData$SteinVotes)
+electionData <- merge(all_states,electionData,by="region")
+
+south_states <- c("Delaware", "Florida", "Georgia", "Maryland", "North Carolina", "South Carolina", "Virginia", "District of Columbia", "West Virginia", "Alabama", "Kentucky", "Mississippi", "Tennessee", "Arkansas", "Louisiana", "Oklahoma", "Texas")
+south_states <- tolower(south_states)
+
+south_data <- filter(electionData, region %in% south_states)
+
+south_election_plot <- ggplot()+geom_polygon(data=south_data,aes(x=long, y=lat, group = group, fill=ObamaPerc),color="grey50")+coord_map()+labs(x="",y="",title="2012 Election Results")+theme_classic()+ theme(axis.ticks.y = element_blank(),axis.text.y = element_blank(), axis.ticks.x = element_blank(),axis.text.x = element_blank()) + scale_fill_gradient2(name="Obama's Percentage",low="red",mid="white",high="blue",midpoint=.5)
+
+south_election_plot
+```

@@ -1,0 +1,14 @@
+"0","crime <- read_csv(""CrimeStatebyState.csv"")"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  State = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","us_data <- filter(crime,State == ""United States-Total"")"
+"0","ggplot(us_data, aes(x=Year, y=`Violent Crime rate`)) +"
+"0","  geom_line(color=""green"") + "
+"0","  labs(title=""Violent Crime in the United States"", y=""Crimes per 100,000 residents"") +"
+"0","  theme_classic()"

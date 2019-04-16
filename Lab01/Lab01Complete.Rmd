@@ -1,0 +1,140 @@
+---
+title: "Lab01Complete"
+author: "Greg Wills"
+date: "1/24/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+In this exercise, we will attempt to provide an answer to the question, "How do light users of alcohol differ from those who are heavy users of alcohol in terms of their self-reported overall health?" In this document we will:
+
+* load our data
+* make a definition of "light users" and "heavy users"
+* filter our data to create two new, smaller datasets: a "light users" dataset and a "heavy users" dataset
+* combine those two datasets
+* prepare a large variety of graphs displaying the distribution of self-reported overall health of both groups
+* report the results
+* give several possible conclusions based on these results
+
+# Data
+
+To address this question, we will use data from the 2014 National Survey on Drug Use and Health, which is conducted annually by the Substance Abuse and Mental Health Services Administration (SAMHSA), an agency in the U.S. Department of Health and Human Services (DHHS).  More information about this survey can be found at [ICPSR's data archive page](http://www.icpsr.umich.edu/icpsrweb/ICPSR/series/64).  The data has been prepared into a .Rdata file, so we can simply load it in the workspace with the `load()` command. At this time, we'll also load our packages:
+
+```{r data_and_packages_load, message=F}
+library(tidyverse)
+library(forcats)
+load("36361-0001-Data.rda")
+```
+
+Because the data object has an unpleasant name, *da36361.0001*, we make a copy with the name *full_data* and remove the original data object. 
+
+```{r data_rename}
+full_data <- da36361.0001
+remove(da36361.0001)
+```
+
+
+
+# Definition of "Current Users"
+
+#Now, we need to determine what we will consider to be a "current user."  We will base this definition off of the number of a days that a respondent reports using alcohol in the past 30 days.
+
+```{r reg_use_def}
+#current_use_criteria <- !0
+#if(full_data$ALCREC <= 30){
+#  current_use
+#}
+# never_use_criteria <- 0
+```
+
+# Definition of "Light User"
+
+We have defined light users as those who have drank alcohol 10 days or less within the past month.
+
+```{r light_user_def}
+light_use_criteria <- 10
+```
+
+# Definition of "Heavy User"
+
+We have defined heavy users as those who have drank alcohol more than 20 days within the past month.
+
+```{r heavy_user_def}
+heavy_use_criteria <- 20
+```
+
+#Data Manipulation
+
+We ar looking for the self-reported overall health of people who are categorized as "heavy," "light," "moderate," or "never" users. Below we have manipulated the data to classify people under these definitions using the variable *alc_user_status*.
+
+```{r full_data}
+full_data <- mutate(full_data, alc_user_status =
+                    ifelse(ALCFLAG == "(0) Never used (IRALCRC = 9)", "Never User", 
+                           ifelse(ALCMON == "(0) Did not use in the past month (IRALCRC = 2-3,0)", 
+                                  "Former User", "Current User")))
+full_data <- mutate(full_data, alc_30day_use = cut(ALCDAYS, c(0, 10, 20, 30),
+                                                   c("Light User", "Moderate User", "Heavy User")))
+
+full_data <- mutate(full_data, alc_user_status = ifelse(alc_user_status =="Current User",
+                                                        as.character(alc_30day_use), alc_user_status))
+
+full_data <- mutate(full_data, alc_user_status = as.factor(alc_user_status))
+
+full_data <- mutate(full_data, alc_user_status = fct_relevel(alc_user_status,
+                                                            "Never User",
+                                                            "Light User",
+                                                            "Moderate User",
+                                                            "Heavy User"))
+```
+
+Using these definitions, we can now create two data subgroups: heavy users and light users. Now, we wish to compare the relative health of people who we have defined as heavy users versus those we have defined as light users. 
+
+```{r subsetting_data}
+heavy_users <- filter(full_data, ALCDAYS > heavy_use_criteria)
+light_users <- filter(full_data, ALCDAYS < light_use_criteria)
+```
+
+Next, we remove the *full_data* object and drop the unneeded variables from our *light_users* and *heavy_users* datasets.  These steps are not necessary, but clearing out unneeded objects and variables can improve the speed with with your code is executed.
+
+```{r shrinking_data}
+# remove(full_data)
+
+heavy_users <- select(heavy_users, HEALTH)
+light_users <- select(light_users, HEALTH)
+```
+
+It may be useful to us to have the data about both groups (heavy and light users) in our data object.  To accomplish this, we add a new variable *user_status* to both our data objects.  For all observations in *current_users* we wish to set the value of this variable to "current"  For all observations in *light_users* we wish to set the value of this variable to "light"  Once we have added this variable to both datasets, we combine them using the **rbind()** function.  **rbind()** stands for row bind -- it binds or glues two datasets together along by putting one dataset on top of the other.
+
+```{r combining data}
+heavy_users$alc_user_status <- "heavy"
+light_users$alc_user_status <- "light"
+combined_data <- rbind(heavy_users, light_users)
+```
+
+#Visual Display
+
+We start our graphical analysis by making a some basic plots showing the self-reported overall health of regular users.
+
+# Numerical Verification
+
+```{r verification}
+user_counts <- count(full_data,alc_user_status)
+health_counts <- count(full_data,alc_user_status,HEALTH)
+print(health_counts,n=nrow(health_counts)) # nrow counts number of rows exactly
+print(user_counts)
+```
+
+Of 31782 "never users," 9162 (or about 29%) reported "excellent" health, which agrees with what we see in our graph. [a few more lines go here]
+
+# Results
+
+What we see in the graph
+
+# Conclusion/Discussion
+
+

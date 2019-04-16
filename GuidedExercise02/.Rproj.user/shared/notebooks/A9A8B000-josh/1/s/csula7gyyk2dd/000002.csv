@@ -1,0 +1,10 @@
+"0","ggplot(pitching_summary_2)+
+  labs(title = ""Proportion of Pitchers (pitching at least 10 games)\n With Low and High ERA's by Year"", x=""Year"", y=""Proportion"")+
+  geom_line(aes(x=yearID, y=ERA_under_three_proportion, color=""3 or under""))+
+  geom_line(aes(x=yearID, y=ERA_over_six_proportion, color=""6 or higher""))+
+scale_color_manual(values=c(""3 or under""= ""darkblue"", ""6 or higher""=""red""), name=""ERA"")+
+  theme_classic()
+"
+"2","Error in ggplot(pitching_summary_2) : 
+  object 'pitching_summary_2' not found
+"

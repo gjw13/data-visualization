@@ -1,0 +1,84 @@
+---
+title: "Lab 01 Report"
+author: "KNM"
+date: "January 24, 2019"
+output: html_document
+---
+```{r, include=F}
+knitr::opts_chunk$set(fig.width=10) 
+```
+
+# Intro
+
+Text
+
+# Data
+
+Data is from the National Survey on Drug Use and Health , which is conducted annually by the Substance Abuse and Mental Health Services Administration (SAMHSA), an agency in the U.S. Department of Health and Human Services (DHHS).  More information about this survey can be found at [ICPSR's data archive page](http://www.icpsr.umich.edu/icpsrweb/ICPSR/series/64).  The data has been prepared into a .Rdata file, so we can simply load it in the workspace with the `load()` command. At this time, we'll also load our packages:
+
+```{r data_and_packages_load, message=F}
+library(tidyverse)
+load("36361-0001-Data.rda")
+full_data <- da36361.0001
+remove(da36361.0001)
+```
+
+#Data Manipulation
+
+Tell what you plan to do.  Do it:
+
+```{r data_manipulation}
+full_data <- mutate(full_data, mj_user_status = 
+                      ifelse(MRJFLAG == "(0) Never used (IRMJRC = 9)","Never User",
+                             ifelse(MRJMON == "(0) Did not use in the past month (IRMJRC = 2-3,9)",
+                                    "Former User", "Current User")))
+
+full_data <- mutate(full_data, mj_30day_use = cut(MJDAY30A,c(0,10,20,30),
+                                                  c("Light User","Moderate User","Heavy User")))
+
+full_data <- mutate(full_data, mj_user_status = ifelse(mj_user_status=="Current User",
+                                                       as.character(mj_30day_use),
+                                                       mj_user_status))
+
+full_data <- mutate(full_data, mj_user_status = as.factor(mj_user_status))
+
+full_data <- mutate(full_data, mj_user_status = fct_relevel(mj_user_status,
+                                                            "Never User",
+                                                            "Former User",
+                                                            "Light User",
+                                                            "Moderate User"))
+
+full_data <- filter(full_data,!is.na(HEALTH),!is.na(mj_user_status))
+```
+
+#Visual Display
+
+```{r display}
+ggplot(full_data)+
+  geom_bar(aes(x=mj_user_status, fill=HEALTH),position="fill")+
+  scale_x_discrete(name="Use of Marijuana",labels=c("Never User",
+                            "Former User",
+                            "Light Current User\n(10 or fewer days per month)",
+                            "Moderate Current User\n(11-20 days per month)",
+                            "Heavy Current User\n(more than 20 days per month)"))+
+  scale_fill_brewer(palette="RdYlBu",direction=-1,
+                    labels=c("Excellent","Very Good","Good","Fair","Poor"),
+                    name="Self-Reported \nOverall Health")+
+  coord_flip()+labs(y="Proportion",title="Self-Reported Health by Marijuana User Status")+
+  theme_classic()
+```
+
+# Numerical Verifcation
+
+```{r verification}
+user_counts <- count(full_data,mj_user_status)
+health_counts <- count(full_data,mj_user_status,HEALTH)
+print(user_counts)
+print(health_counts,n=nrow(health_counts))
+```
+
+Manually, we see that `r filter(health_counts,mj_user_status=="Never User",HEALTH=="(1) Excellent")[,"n"]` of `r user_counts[1,"n"]` (about `r round(filter(health_counts,mj_user_status=="Never User",HEALTH=="(1) Excellent")[,"n"]/user_counts[1,"n"]*100)`%) "never users" self-reported "excellent" overall health, which is consistent with what our display shows.
+
+# Results
+
+# Conclusion/Discussion

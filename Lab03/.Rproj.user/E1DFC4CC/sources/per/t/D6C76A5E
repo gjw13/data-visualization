@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1553016324707.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1432997319",
+    "id" : "D6C76A5E",
+    "lastKnownWriteTime" : 1554399532,
+    "last_content_update" : 1554399532,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/Lab03/global.R",
+    "project_path" : "global.R",
+    "properties" : {
+        "cursorPosition" : "92,0",
+        "scrollLine" : "75"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

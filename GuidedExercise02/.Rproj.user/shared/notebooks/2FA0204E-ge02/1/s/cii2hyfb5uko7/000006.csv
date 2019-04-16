@@ -1,0 +1,1 @@
+"0","ggplot(summary_salary)+geom_line(aes(x=yearID, y=median))"

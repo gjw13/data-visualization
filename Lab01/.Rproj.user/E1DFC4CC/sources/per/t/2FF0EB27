@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1548178330184.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2095864526",
+    "id" : "2FF0EB27",
+    "lastKnownWriteTime" : 1548184560,
+    "last_content_update" : 1548184560594,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data Viz/Lab01/supplement.R",
+    "project_path" : "supplement.R",
+    "properties" : {
+        "cursorPosition" : "53,0",
+        "scrollLine" : "36"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

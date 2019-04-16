@@ -1,0 +1,3 @@
+"0","piegraph2 <- ggplot(full_data) + geom_bar(aes(x=alc_user_status, fill=alc_user_status, color=alc_user_status, y=..count../sum(..count..)), width=1) + coord_polar()+scale_y_sqrt()"
+"0","piegraph2 <- piegraph2 + labs(title=""Proportions of Alcohol Users Categorized by Usage Status"")"
+"0","piegraph2"

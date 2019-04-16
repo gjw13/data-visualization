@@ -1,0 +1,113 @@
+---
+title: "Lab 02 Initial Work"
+author: "Greg Wills, Tyler Wiik, Lisa Chua"
+date: "2/12/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+The goal of this project is to evaluate the relationship, if any, between urbanization rates and property crime. Our topic of interest will attempt to address the question "What is the connection between urbanization rates and property crime?"
+
+## Data
+To address this question, we used crime data from the FBI's Uniform Crime Report, which gathers crime statistics from law enforcement agencies. The data is provided by state and U.S. total on an annual basis from 1960 to 2014. Additional information can be found at: https://www.ucrdatatool.gov/.
+
+We also used data from the U.S. Census Bureau which gives urban population as a percentage of total population for decennial years 1790 - 2010 for states, the four census regions and U.S. total. The data can be found at: https://factfinder.census.gov.
+
+```{r intro}
+library(tidyverse)
+crime <- read_csv("CrimeStatebyState.csv")
+urbanization <- read_csv("urbanization.csv")
+
+urbanization_long <- gather(urbanization,key="Year",value="urban_rate",-Region)
+
+names(urbanization_long)[1] <- "State"
+
+state_urb <- filter(urbanization_long,State!="UnitedStates",State!="Midwest",State!="Northeast",State!="West", State!= "South", Year >= 1970)
+
+state_urb$Year <- as.numeric(as.character(state_urb$Year))
+state_urb$urban_rate <- as.numeric(as.character(state_urb$urban_rate))
+state_urb$State[state_urb$State == "Washington, D.C."] <- "District of Columbia"
+
+property_crime <- select(crime,Year,State,Population,`Property crime total`,`Property crime rate`)
+property_crime_decade <- filter(property_crime,Year %in% seq(1970,2010,by=10),State!="United States-Total")
+
+full_data <- full_join(property_crime_decade,state_urb,by=c("State","Year"))
+
+#####parameterization##############
+selectedYear <- 1970
+xVar <- "mortality"
+yVar <- "income"
+xLabel <- "Child Mortality\n(Number of 0-5 year olds died per 1000 births)"
+yLabel <- "GDP per Capita"
+xTrans <- "identity"
+yTrans <- "log2"
+xDollar <- F
+yDollar <- T
+###################################
+```
+
+```{r time_series_urbanization}
+state_urb_california <- filter(state_urb,State=="California")
+
+ggplot(state_urb_california)+
+  geom_line(aes(x=Year,y=urban_rate),color="blue")+
+  labs(x="Year",y="Urbanization Rate",title="Urbanization Rate in California")+
+  theme_classic()
+```
+
+```{r time_series_property_crime}
+property_crime_decade_cali <- filter(property_crime_decade,State=="California")
+
+ggplot(property_crime_decade_cali)+
+  geom_line(aes(x=Year,y=`Property crime rate`),color="red")+
+  labs(x="Year",y="Property Crime Rate (per 100,000 residents)",title="Property Crime Rate in California")+
+  theme_light()
+```
+
+```{r urbanization_map}
+library(maps)
+all_states <- map_data("state")
+all_states <- rename(all_states, State = region)
+state_urb <- mutate(state_urb, State=tolower(State))
+state_urb_data <- left_join(all_states,state_urb,by="State")
+
+state_urb_2000 <- filter(state_urb_data, Year == 2000)
+
+ggplot()+
+  geom_polygon(data=state_urb_2000,
+               aes(x=long,
+                   y=lat,
+                   group = group,
+                   fill=urban_rate),
+               color="black")+
+  scale_fill_distiller(palette="Blues",direction=1, name = "Urbanization Rate")+
+  labs(title = "Urbanization Rate of US States in 2000")+
+  coord_map()
+
+```
+
+```{r propcrime_map}
+# library(maps)
+property_crime_decade <- mutate(property_crime_decade, State=tolower(State))
+state_propcrime_data <- left_join(all_states,property_crime_decade,by="State")
+
+state_propcrime_2000 <- filter(state_propcrime_data, Year == 2000)
+
+ggplot()+
+  geom_polygon(data=state_propcrime_2000,
+               aes(x=long,
+                   y=lat,
+                   group = group,
+                   fill=`Property crime rate`),
+               color="black")+
+  scale_fill_distiller(palette="Reds",direction=-1, name = "Property Crime Rate")+
+  labs(title = "Property Crime Rate of US States in 2000")+
+  coord_map()
+
+```
+

@@ -1,0 +1,5 @@
+"0","library(tidyverse)"
+"0","player_data <- read.csv(""Master.csv"")"
+"0","pitching_data <- read.csv(""Pitching.csv"")"
+"0","salary_data <- read.csv(""Salaries.csv"")"
+"0","inflation_index <- read.csv(""inflation.csv"")"

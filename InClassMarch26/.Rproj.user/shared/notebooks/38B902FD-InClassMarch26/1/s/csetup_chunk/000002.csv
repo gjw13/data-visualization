@@ -1,0 +1,11 @@
+"0","diamonds.small <-  diamonds[sample(nrow(diamonds), 500) ]
+"
+"2","Error: Positive column indexes in `[` must match number of columns:
+* `.data` has 10 columns
+* Position 1 equals 52130
+* Position 2 equals 34659
+* Position 3 equals 459
+* Position 4 equals 50143
+* … and 496 more problems
+[90mCall `rlang::last_error()` to see a backtrace[39m
+"

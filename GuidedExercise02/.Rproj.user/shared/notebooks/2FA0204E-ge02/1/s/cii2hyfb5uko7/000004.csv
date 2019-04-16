@@ -1,0 +1,3 @@
+"0","salary_data$yearID <- as.factor(salary_data$yearID)"
+"0","summary_salary <- summarize(group_by(salary_data, yearID), Q1 = quantile(salary,.25,na.rm=T),median=median(salary,na.rm=T), Q3 = quantile(salary,.75,na.rm=T), min=min(salary,na.rm=T), max=max(salary,na.rm=T))"
+"0","summary_salary"

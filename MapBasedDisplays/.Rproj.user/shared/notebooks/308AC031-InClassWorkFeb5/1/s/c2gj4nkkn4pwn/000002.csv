@@ -1,0 +1,17 @@
+"0","crime <- read_csv(""CrimeStatebyState.csv"")"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  State = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","# "
+"0","#crime_filtered <- summarize(group_by(crime, Year,`Aggravated assault rate`,`Murder and nonnegligent manslaughter rate`,`Legacy rape rate /1`,`Robbery rate`))"
+"0","us_crimes <- select(crime, Year,`Aggravated assault rate`,`Murder and nonnegligent manslaughter rate`,`Legacy rape rate /1`,`Robbery rate`)"
+"0","us_crimes_gathered <- gather(us_crimes, key=""Violent Crime Type"",value=Rate,-Year)"
+"0","ggplot(us_crimes_gathered) + "
+"0","  geom_line(aes(x=Year,y=Rate,color=`Violent Crime Type`))+"
+"0","  scale_color_discrete(name=""Violent Crime Type"")+"
+"0","  theme_classic()"

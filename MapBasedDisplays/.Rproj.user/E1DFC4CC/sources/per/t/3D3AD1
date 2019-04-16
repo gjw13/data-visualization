@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1549842767329.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3560767889",
+    "id" : "3D3AD1",
+    "lastKnownWriteTime" : 1550030181,
+    "last_content_update" : 1550030183486,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/MapBasedDisplays/InClassWorkFeb5.Rmd",
+    "project_path" : "InClassWorkFeb5.Rmd",
+    "properties" : {
+        "cursorPosition" : "24,38",
+        "last_setup_crc32" : "",
+        "scrollLine" : "9",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

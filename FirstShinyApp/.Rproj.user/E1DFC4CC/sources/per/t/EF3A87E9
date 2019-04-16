@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1550166128322.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1948826304",
+    "id" : "EF3A87E9",
+    "lastKnownWriteTime" : 1550169928,
+    "last_content_update" : 1550169928600,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/FirstShinyApp/server.R",
+    "project_path" : "server.R",
+    "properties" : {
+        "cursorPosition" : "27,22",
+        "scrollLine" : "22"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

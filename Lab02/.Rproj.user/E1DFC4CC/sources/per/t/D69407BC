@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1549992767445.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2228587740",
+    "id" : "D69407BC",
+    "lastKnownWriteTime" : 1550609348,
+    "last_content_update" : 1550609348678,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/Lab02/Lab02InitialWork.Rmd",
+    "project_path" : "Lab02InitialWork.Rmd",
+    "properties" : {
+        "cursorPosition" : "44,22",
+        "last_setup_crc32" : "D1F4668Fbb338d19",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

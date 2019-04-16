@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1549339987139.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "704507612",
+    "id" : "3DDAB37E",
+    "lastKnownWriteTime" : 1549402122,
+    "last_content_update" : 1549402122165,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/GuidedExercise02/josh.Rmd",
+    "project_path" : "josh.Rmd",
+    "properties" : {
+        "cursorPosition" : "28,51",
+        "last_setup_crc32" : "8D230461bb338d19",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

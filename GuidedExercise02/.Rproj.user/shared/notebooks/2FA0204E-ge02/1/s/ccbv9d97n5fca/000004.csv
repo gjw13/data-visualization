@@ -1,0 +1,3 @@
+"0","pitching_data$yearID <- as.factor(pitching_data$yearID)"
+"0","pitching_data <- filter(pitching_data, !is.na(ERA))"
+"0","ggplot(pitching_data) + geom_boxplot(aes(x=yearID,y=ERA))"

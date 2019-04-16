@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1548956694739.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "363001F8",
+    "lastKnownWriteTime" : 1548958534,
+    "last_content_update" : 1548958534820,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data Viz/GapMinder/bubbles.R",
+    "project_path" : "bubbles.R",
+    "properties" : {
+        "cursorPosition" : "37,0",
+        "scrollLine" : "21"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

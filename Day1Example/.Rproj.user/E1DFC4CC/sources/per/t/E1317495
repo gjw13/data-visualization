@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1547144696783.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "975848658",
+    "id" : "E1317495",
+    "lastKnownWriteTime" : 1547145827,
+    "last_content_update" : 1547145827972,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data Viz/Day1Example/scratch.R",
+    "project_path" : "scratch.R",
+    "properties" : {
+        "cursorPosition" : "11,55",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

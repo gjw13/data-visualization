@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1553618216310.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3601684802",
+    "id" : "74ACFB2B",
+    "lastKnownWriteTime" : 1553618436,
+    "last_content_update" : 1553618436072,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/InClassMarch26/inClassNotes-2dimensionalDensity.R",
+    "project_path" : "inClassNotes-2dimensionalDensity.R",
+    "properties" : {
+        "cursorPosition" : "52,55",
+        "scrollLine" : "49"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

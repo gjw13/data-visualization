@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1550166124667.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3072622627",
+    "id" : "AC406782",
+    "lastKnownWriteTime" : 1550172456,
+    "last_content_update" : 1550172456528,
+    "path" : "~/Documents/Georgetown/Senior_Spring/Data_Viz/FirstShinyApp/bubbles-parameterized.R",
+    "project_path" : "bubbles-parameterized.R",
+    "properties" : {
+        "cursorPosition" : "29,9",
+        "scrollLine" : "21"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
